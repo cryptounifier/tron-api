@@ -15,7 +15,7 @@ try {
 
 
 try {
-    $tron = new Tron($fullNode, $solidityNode, $eventServer, null, true);
+    $tron = new Tron($fullNode, $solidityNode, $eventServer);
     $contract = $tron->contract('TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t');  // Tether USDT https://tronscan.org/#/token20/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t
 
     // Data

@@ -1,4 +1,4 @@
-# TRON API
+# TRON API (PHP 8 Supported)
 A PHP API for interacting with the Tron Protocol
 
 [![Latest Stable Version](https://poser.pugx.org/iexbase/tron-api/version)](https://packagist.org/packages/iexbase/tron-api)
@@ -17,6 +17,7 @@ A PHP API for interacting with the Tron Protocol
 The following versions of PHP are supported by this version.
 
 * PHP 7.4
+* PHP 8.0
 
 ## Example Usage
 
