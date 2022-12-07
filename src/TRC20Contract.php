@@ -16,7 +16,6 @@ declare(strict_types=1);
 
 namespace IEXBase\TronAPI;
 
-use Comely\DataTypes\BcNumber;
 use IEXBase\TronAPI\Exception\TRC20Exception;
 use IEXBase\TronAPI\Exception\TronException;
 
@@ -26,7 +25,7 @@ use IEXBase\TronAPI\Exception\TronException;
  */
 class TRC20Contract
 {
-    const TRX_TO_SUN = 1000000;
+    public const TRX_TO_SUN = 1000000;
 
     /***
      * Maximum decimal supported by the Token
@@ -96,7 +95,7 @@ class TRC20Contract
         $this->_tron = $tron;
 
         // If abi is absent, then it takes by default
-        if(is_null($abi)) {
+        if (is_null($abi)) {
             $abi = file_get_contents(__DIR__.'/trc20.json');
         }
 
@@ -199,7 +198,6 @@ class TRC20Contract
     public function totalSupply(bool $scaled = true): string
     {
         if (!$this->_totalSupply) {
-
             $result = $this->trigger('totalSupply', null, []);
             $totalSupply = $result[0]->toString() ?? null;
 
@@ -247,8 +245,9 @@ class TRC20Contract
      */
     public function balanceOf(string $address = null, bool $scaled = true): string
     {
-        if(is_null($address))
+        if (is_null($address)) {
             $address = $this->_tron->address['base58'];
+        }
 
         $addr = str_pad($this->_tron->address2HexString($address), 64, "0", STR_PAD_LEFT);
         $result = $this->trigger('balanceOf', $address, [$addr]);
@@ -275,15 +274,15 @@ class TRC20Contract
      */
     public function transfer(string $to, string $amount, string $from = null): array
     {
-        if($from == null) {
+        if ($from == null) {
             $from = $this->_tron->address['base58'];
         }
 
         $feeLimitInSun = bcmul((string)$this->feeLimit, (string)self::TRX_TO_SUN);
 
-        if (!is_numeric($this->feeLimit) OR $this->feeLimit <= 0) {
+        if (!is_numeric($this->feeLimit) or $this->feeLimit <= 0) {
             throw new TRC20Exception('fee_limit is required.');
-        } else if($this->feeLimit > 1000) {
+        } elseif ($this->feeLimit > 1000) {
             throw new TRC20Exception('fee_limit must not be greater than 1000 TRX.');
         }
 
@@ -328,7 +327,7 @@ class TRC20Contract
     public function getTransactionInfoByContract(array $options = []): array
     {
         return $this->_tron->getManager()
-            ->request("v1/contracts/{$this->contractAddress}/transactions?".http_build_query($options), [],'get');
+            ->request("v1/contracts/{$this->contractAddress}/transactions?".http_build_query($options), [], 'get');
     }
 
     /**
@@ -339,7 +338,7 @@ class TRC20Contract
     public function getTRC20TokenHolderBalance(array $options = []): array
     {
         return $this->_tron->getManager()
-            ->request("v1/contracts/{$this->contractAddress}/tokens?".http_build_query($options), [],'get');
+            ->request("v1/contracts/{$this->contractAddress}/tokens?".http_build_query($options), [], 'get');
     }
 
     /**
@@ -379,7 +378,7 @@ class TRC20Contract
      */
     protected function decimalValue(string $int, int $scale = 18): string
     {
-        return (new BcNumber($int))->divide(pow(10, $scale), $scale)->value();
+        return bcdiv($int, (string) pow(10, $scale), $scale);
     }
 
     /**
@@ -397,7 +396,7 @@ class TRC20Contract
      * @param int $fee_limit
      * @return TRC20Contract
      */
-    public function setFeeLimit(int $fee_limit) : TRC20Contract
+    public function setFeeLimit(int $fee_limit): TRC20Contract
     {
         $this->feeLimit = $fee_limit;
         return $this;
